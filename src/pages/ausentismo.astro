@@ -33,7 +33,7 @@ const cdAnual = rows.map((r) => {
 const sinDato = ausentismoMensual.filter((m) => !m.conDato).map((m) => m.label);
 ---
 <Layout title="Ausentismo" description={`Ausentismo mensual y anual · ${CD_NOMBRE}`}>
-  <SectionSummary title="Resumen de ausentismo" icon="calendar" kpis={ausentismo.kpis} hallazgos={ausentismo.hallazgos} />
+  <SectionSummary title="Análisis de ausentismo" icon="calendar" kpis={ausentismo.kpis} hallazgos={ausentismo.hallazgos} />
 
   <YearFilter years={ANIOS} defaultYear={ausentismo.anio} />
 
