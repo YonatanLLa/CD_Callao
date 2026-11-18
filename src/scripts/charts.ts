@@ -10,13 +10,8 @@ import { fmtNum, fmtPctC } from "../lib/format";
 
 echarts.use([BarChart, LineChart, GridComponent, LegendComponent, TooltipComponent, CanvasRenderer]);
 
-/** Etiqueta de eje en %: 2 decimales, o hasta 4 si el valor es muy pequeño (evita "0.03%" repetido). */
-const fmtPctEje = (v: number): string => {
-  if (!v) return "0%";
-  const p = v * 100;
-  const dec = Math.abs(p) >= 0.1 ? 2 : Math.abs(p) >= 0.01 ? 3 : 4;
-  return `${Number(p.toFixed(dec))}%`;
-};
+/** Etiqueta de eje en % con 2 decimales. */
+const fmtPctEje = (v: number): string => fmtPctC(v);
 
 type Opt = Record<string, any>;
 
@@ -84,7 +79,11 @@ function addFormatters(opt: Opt, format: string) {
   const pct = format === "pct" || format === "pctc";
   const f = pct ? (v: unknown) => fmtPctC(valOf(v)) : (v: unknown) => fmtNum(valOf(v));
   for (const ax of [...asArray(opt.xAxis), ...asArray(opt.yAxis)]) {
-    if (ax.type === "value") ax.axisLabel = { ...(ax.axisLabel ?? {}), formatter: (v: number) => (pct ? fmtPctEje(v) : fmtNum(v)) };
+    if (ax.type === "value") {
+      ax.axisLabel = { ...(ax.axisLabel ?? {}), formatter: (v: number) => (pct ? fmtPctEje(v) : fmtNum(v)) };
+      // Con 2 decimales, el paso mínimo entre marcas es 0.01 % para que no se repitan etiquetas.
+      if (pct) ax.minInterval = Math.max(ax.minInterval ?? 0, 0.0001);
+    }
   }
   const series = asArray(opt.series);
   const tip = (opt.tooltip ??= {});

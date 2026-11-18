@@ -16,10 +16,9 @@ const b = (s: string) => `<b>${s}</b>`;
 const listaY = (xs: string[]) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} y ${xs[xs.length - 1]}`);
 const plural = (n: number, s: string, p = `${s}s`) => `${fmtNum(n)} ${n === 1 ? s : p}`;
 
-/** Valor y meta con los decimales justos para que no parezcan iguales cuando no lo son. */
+/** Valor y meta siempre con 2 decimales (fmtPctC muestra "<0.01%" para valores mínimos). */
 export function par(v: number, meta: number): [string, string] {
-  const d = fmtPctC(v) !== fmtPctC(meta) || v === meta ? 2 : 4;
-  return [fmtPctC(v, d), fmtPctC(meta, meta === 0 ? 2 : d)];
+  return [fmtPctC(v), fmtPctC(meta)];
 }
 const relacion = (v: number, meta: number) => (v < meta ? "por debajo de" : v > meta ? "por encima de" : "igual a");
 const estadoMeta = (v: N, meta: N): { status: Tono; statusText: string } =>
@@ -149,7 +148,7 @@ export const ausentismo = (() => {
     const d = aus.pct - ausPrev.pct;
     hallazgos.push({
       tono: d <= 0 ? "ok" : "alerta",
-      html: d === 0 ? `Igual que en ${a - 1} (${fmtPctC(ausPrev.pct)}).` : `Frente a ${a - 1} (${fmtPctC(ausPrev.pct)}), ${d < 0 ? "baja" : "sube"} ${b(fmtPP(d, Math.abs(d) < 0.0001 ? 4 : 2))}.`,
+      html: d === 0 ? `Igual que en ${a - 1} (${fmtPctC(ausPrev.pct)}).` : `Frente a ${a - 1} (${fmtPctC(ausPrev.pct)}), ${d < 0 ? "baja" : "sube"} ${b(fmtPP(d))}.`,
     });
   }
   hallazgos.push({

@@ -58,11 +58,17 @@ export function fmtPctC(v: number | null | undefined, decimales = 2, vacio = SIN
   const f = (PCT_FIXED[decimales] ??= new Intl.NumberFormat("es-PE", {
     style: "percent", minimumFractionDigits: decimales, maximumFractionDigits: decimales,
   }));
+  // Un valor positivo que redondea a 0 se muestra como "<0.01%" para no confundirlo con cero.
+  const minimo = 10 ** -decimales / 100;
+  if (v > 0 && v < minimo / 2) return `<${f.format(minimo).replace(/\s/g, "")}`;
   return f.format(v).replace(/\s/g, "");
 }
 
-/** Diferencia absoluta en puntos porcentuales ("0.45 pp"). */
+/** Diferencia absoluta en puntos porcentuales ("0.45 pp"); menos de 0.005 pp → "<0.01 pp". */
 export function fmtPP(diff: number, decimales = 2): string {
   const n = new Intl.NumberFormat("es-PE", { minimumFractionDigits: decimales, maximumFractionDigits: decimales });
-  return `${n.format(Math.abs(diff) * 100)} pp`;
+  const pp = Math.abs(diff) * 100;
+  const minimo = 10 ** -decimales;
+  if (pp > 0 && pp < minimo / 2) return `<${n.format(minimo)} pp`;
+  return `${n.format(pp)} pp`;
 }

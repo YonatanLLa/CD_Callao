@@ -28,7 +28,7 @@ const diasPorAnio: Record<string, EChartsOption> = Object.fromEntries(
 const { empresas, rows, invalidas } = ausentismoPorEmpresa;
 const cdAnual = rows.map((r) => {
   const p = resumenAusentismo.find((x) => x.anio === r.anio)?.pct ?? null;
-  return fmtPctC(p, p != null && p > 0 && p < 0.00005 ? 4 : 2, "NA");
+  return fmtPctC(p, 2, "NA");
 });
 const sinDato = ausentismoMensual.filter((m) => !m.conDato).map((m) => m.label);
 ---
