@@ -1,0 +1,108 @@
+---
+import type { EChartsOption } from "echarts";
+import Layout from "../layouts/Layout.astro";
+import Chart from "../components/Chart.astro";
+import Icon from "../components/Icon.astro";
+import SectionSummary from "../components/SectionSummary.astro";
+import YearFilter from "../components/YearFilter.astro";
+import { CD_NOMBRE } from "../config/resumen";
+import { ANIOS, ausentismoMensual, ausentismoPorEmpresa, diasAusentesPorEmpresa, resumenAusentismo } from "../lib/data";
+import { ausentismo } from "../lib/insights";
+import { hbar, line, lines, metaLine } from "../lib/charts";
+import { colorEmpresa } from "../lib/colors";
+import { fmtPctC } from "../lib/format";
+
+const mensual = lines(ausentismoMensual.map((m) => m.label), [
+  line({ name: `Ausentismo ${CD_NOMBRE}`, data: ausentismoMensual.map((m) => m.pct), area: true, labels: "ends" }),
+  metaLine(ausentismoMensual.map((m) => m.meta), "Meta mensual"),
+]);
+
+// Una opción por año: ranking de días ausentes por empresa (ordenado de menor a mayor para que el mayor quede arriba).
+const diasPorAnio: Record<string, EChartsOption> = Object.fromEntries(
+  Object.entries(diasAusentesPorEmpresa).map(([anio, filas]) => {
+    const asc = [...filas].reverse();
+    return [anio, hbar(asc.map((f) => f.empresa), asc.map((f) => f.dias), { name: "Días ausentes", colors: asc.map((f) => colorEmpresa(f.empresa)), barWidth: 18 })];
+  }),
+);
+
+const { empresas, rows, invalidas } = ausentismoPorEmpresa;
+const cdAnual = rows.map((r) => {
+  const p = resumenAusentismo.find((x) => x.anio === r.anio)?.pct ?? null;
+  return fmtPctC(p, p != null && p > 0 && p < 0.00005 ? 4 : 2, "NA");
+});
+const sinDato = ausentismoMensual.filter((m) => !m.conDato).map((m) => m.label);
+---
+<Layout title="Ausentismo" description={`Ausentismo mensual y anual · ${CD_NOMBRE}`}>
+  <SectionSummary title="Resumen de ausentismo" icon="calendar" kpis={ausentismo.kpis} hallazgos={ausentismo.hallazgos} />
+
+  <YearFilter years={ANIOS} defaultYear={ausentismo.anio} />
+
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-[3fr_2fr]">
+    <Chart
+      id="ausentismo-mensual"
+      title={`Ausentismo mensual ${CD_NOMBRE} vs meta`}
+      subtitle="¿Estamos dentro de la meta cada mes? · % de días ausentes sobre días trabajados"
+      option={mensual}
+      format="pctc"
+      height={320}
+      yearFilter
+      note={sinDato.length ? `Meses sin datos en el Excel (${sinDato.join(", ")}): se muestran como hueco.` : undefined}
+    />
+    <Chart
+      id="ausentismo-dias-empresa"
+      title="Días ausentes por empresa"
+      subtitle="¿Dónde se concentra la ausencia? · días en el año seleccionado"
+      option={diasPorAnio[String(ausentismo.anio)] ?? diasPorAnio[""]!}
+      optionsByYear={diasPorAnio}
+      height={320}
+      yearFilter
+    />
+  </div>
+
+  <section class="card overflow-hidden" aria-labelledby="tabla-anual">
+    <header class="p-4 sm:p-5">
+      <div class="section-title items-start!">
+        <span class="section-icon mt-px"><Icon name="table" size={15} strokeWidth={2.2} /></span>
+        <div>
+          <h2 id="tabla-anual">Ausentismo anual por empresa</h2>
+          <p class="mt-0.5 text-[13px] text-ink-2">¿Cómo se compara cada empresa con la meta? · % anual</p>
+        </div>
+      </div>
+    </header>
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <thead>
+          <tr><th>Empresa</th>{rows.map((r) => <th class="text-right!">{r.anio}</th>)}</tr>
+        </thead>
+        <tbody>
+          {empresas.map((e) => (
+            <tr>
+              <td class="whitespace-nowrap font-semibold">
+                <span class="mr-2 inline-block h-2.5 w-2.5 rounded-sm align-middle" style={`background:${colorEmpresa(e)}`}></span>{e}
+              </td>
+              {rows.map((r) => {
+                const v = r.valores[e] ?? null;
+                const sobre = v != null && r.meta != null && v > r.meta;
+                return <td class={`text-right tabular-nums ${sobre ? "font-bold text-alert" : ""}`}>{fmtPctC(v, 2, "NA")}{sobre && <span class="sr-only"> (sobre la meta)</span>}</td>;
+              })}
+            </tr>
+          ))}
+          <tr>
+            <td class="font-bold">{CD_NOMBRE}</td>
+            {cdAnual.map((v) => <td class="text-right font-bold tabular-nums">{v}</td>)}
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr class="bg-brand-navy font-bold text-white">
+            <td class="px-3 py-2 text-xs uppercase">Meta</td>
+            {rows.map((r) => <td class="px-3 py-2 text-right tabular-nums">{fmtPctC(r.meta, 2, "NA")}</td>)}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="border-t border-line px-5 py-3 text-xs text-muted">
+      En ámbar y negrita, valores sobre la meta del año. <b>NA:</b> sin información.
+      {invalidas.length > 0 && <> Se omiten valores inválidos del Excel (&gt; 100 %): {invalidas.join("; ")}.</>}
+    </p>
+  </section>
+</Layout>

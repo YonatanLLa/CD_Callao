@@ -1,0 +1,104 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Chart from "../components/Chart.astro";
+import Icon from "../components/Icon.astro";
+import SectionSummary from "../components/SectionSummary.astro";
+import YearFilter from "../components/YearFilter.astro";
+import { CD_NOMBRE } from "../config/resumen";
+import { ANIOS, resumenRotacion, rotacionMensual, turnoverPorEmpresa } from "../lib/data";
+import { rotacion } from "../lib/insights";
+import { line, lines, metaLine } from "../lib/charts";
+import { colorEmpresa } from "../lib/colors";
+import { fmtPctC } from "../lib/format";
+
+const anual = lines(
+  resumenRotacion.map((r) => String(r.anio)),
+  [
+    line({ name: `Turnover ${CD_NOMBRE}`, data: resumenRotacion.map((r) => r.turnover), labels: "all" }),
+    metaLine(resumenRotacion.map((r) => r.metaTurnover), "Meta CD", { step: false, labels: true }),
+  ],
+  { boundaryGap: true },
+);
+
+const mensual = lines(rotacionMensual.map((m) => m.label), [
+  line({ name: `Turnover ${CD_NOMBRE}`, data: rotacionMensual.map((m) => m.turnoverPct), area: true, labels: "ends" }),
+  metaLine(rotacionMensual.map((m) => m.meta), "Meta mensual"),
+]);
+
+const { anios, empresas, meta } = turnoverPorEmpresa;
+// Notas generadas desde los datos
+const metaEsAnioAnterior = resumenRotacion.slice(1).every((r, i) => r.metaTurnover === resumenRotacion[i]!.turnover);
+const sinDato = rotacionMensual.filter((m) => !m.conDato).map((m) => m.label);
+const maxEmpresa = Math.max(0, ...empresas.flatMap((e) => e.valores.filter((v): v is number => v != null)));
+---
+<Layout title="Rotación" description={`Turnover y NH turnover · ${CD_NOMBRE}`}>
+  <SectionSummary title="Resumen de rotación" icon="users" kpis={rotacion.kpis} hallazgos={rotacion.hallazgos} />
+
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+    <Chart
+      id="rotacion-anual"
+      title={`Turnover anual ${CD_NOMBRE} vs meta`}
+      subtitle="¿Estamos dentro de la meta cada año? · % de ceses sobre headcount"
+      option={anual}
+      format="pctc"
+      height={300}
+      note={metaEsAnioAnterior ? "En el Excel, la meta de cada año coincide con el turnover del año anterior." : undefined}
+    />
+
+    <section class="card flex flex-col gap-3 p-4 sm:p-5">
+      <div class="section-title items-start!">
+        <span class="section-icon mt-px"><Icon name="table" size={15} strokeWidth={2.2} /></span>
+        <div>
+          <h2>Turnover anual por empresa</h2>
+          <p class="mt-0.5 text-[13px] text-ink-2">¿Qué empresa rota más? · % anual; resaltado el valor máximo</p>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-lg border border-line">
+        <table class="w-full table-fixed border-collapse text-[13px] tabular-nums">
+          <colgroup><col class="w-[34%]" />{anios.map(() => <col />)}</colgroup>
+          <thead>
+            <tr class="bg-brand-navy text-white">
+              <th class="bg-brand-yellow px-2.5 py-2 text-left text-[11px] font-extrabold uppercase text-on-yellow">Empresa</th>
+              {anios.map((a) => <th class="px-2 py-2 text-right text-xs font-bold">{a}</th>)}
+            </tr>
+          </thead>
+          <tbody>
+            {empresas.map((e) => (
+              <tr class="border-b border-line">
+                <td class="truncate px-2.5 py-1.5 font-semibold text-ink">
+                  <span class="mr-1.5 inline-block h-2.5 w-2.5 rounded-sm align-middle" style={`background:${colorEmpresa(e.empresa)}`}></span>{e.empresa}
+                </td>
+                {e.valores.map((v) => (
+                  <td class={`px-2 py-1.5 text-right ${v == null ? "font-bold text-muted" : v === maxEmpresa && v > 0 ? "font-extrabold text-ink" : "text-ink-2"}`}>
+                    {v != null && v === maxEmpresa && v > 0
+                      ? <span class="rounded bg-brand-yellow px-1 text-on-yellow">{fmtPctC(v)}</span>
+                      : fmtPctC(v, 2, "NA")}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr class="bg-brand-navy font-bold text-white">
+              <td class="px-2.5 py-2 text-[11px] uppercase">Meta</td>
+              {meta.map((v) => <td class="px-2 py-2 text-right">{fmtPctC(v, 2, "NA")}</td>)}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="text-xs text-muted"><b>NA:</b> No aplica / sin información en el periodo.</p>
+    </section>
+  </div>
+
+  <YearFilter years={ANIOS} />
+  <Chart
+    id="rotacion-mensual"
+    title={`Turnover mensual ${CD_NOMBRE} vs meta`}
+    subtitle="¿En qué meses se superó la meta? · % mensual; se etiquetan el último dato y el máximo"
+    option={mensual}
+    format="pctc"
+    height={320}
+    yearFilter
+    note={sinDato.length ? `Meses sin datos en el Excel (${sinDato.join(", ")}): se muestran como hueco.` : undefined}
+  />
+</Layout>

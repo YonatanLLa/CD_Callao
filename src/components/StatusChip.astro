@@ -1,0 +1,8 @@
+---
+import type { Tono } from "../lib/insights";
+interface Props { tono: Tono; text: string }
+const { tono, text } = Astro.props;
+const cls = tono === "ok" ? "badge-ok" : tono === "alerta" ? "badge-warn" : "badge-neutral";
+const icono = tono === "ok" ? "✓" : tono === "alerta" ? "▲" : "•";
+---
+<span class={`badge ${cls}`}><span aria-hidden="true">{icono}</span>{text}</span>

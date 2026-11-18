@@ -1,0 +1,12 @@
+---
+interface Props { years: number[]; defaultYear?: number }
+const { years, defaultYear } = Astro.props;
+---
+<div class="flex flex-wrap items-center gap-2">
+  <label for="year-select" class="flex items-center gap-2 text-[13px] font-extrabold uppercase tracking-wide text-brand-navy-ink"><span class="h-4 w-1 rounded-full bg-brand-yellow" aria-hidden="true"></span>Año</label>
+  <select id="year-select" data-year-select class="select">
+    <option value="">{`Todos (${years[0]}–${years[years.length - 1]})`}</option>
+    {years.map((y) => <option value={String(y)} selected={y === defaultYear}>{y}</option>)}
+  </select>
+  <span class="text-xs text-muted">Filtra por año los gráficos de esta página.</span>
+</div>

@@ -1,0 +1,55 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Chart from "../components/Chart.astro";
+import SectionSummary from "../components/SectionSummary.astro";
+import { CD_NOMBRE } from "../config/resumen";
+import { cesesPorMesClase, cesesResumen, hcPorCD } from "../lib/data";
+import { headcount } from "../lib/insights";
+import { bars, hbar } from "../lib/charts";
+import { BRAND_NAVY, EMPRESA_COLOR } from "../lib/colors";
+
+const filasCD = hcPorCD.filas.filter((f) => f.valor != null);
+const hcCD = hbar(filasCD.map((f) => f.cd), filasCD.map((f) => f.valor), { highlight: CD_NOMBRE, name: "Headcount T2", barWidth: 10 });
+
+const motivosAsc = [...cesesResumen.porMotivo].reverse();
+const motivos = hbar(motivosAsc.map((m) => m.nombre), motivosAsc.map((m) => m.valor), { name: "Ceses", barWidth: 16 });
+
+const clasePorMes = bars(cesesPorMesClase.meses, [
+  { name: "Involuntario", data: cesesPorMesClase.involuntario, color: BRAND_NAVY },
+  { name: "Voluntario", data: cesesPorMesClase.voluntario, color: EMPRESA_COLOR.T77! },
+], { stacked: true });
+---
+<Layout title="Headcount y ceses" description="Headcount por CD y ceses">
+  <SectionSummary title="Resumen de headcount y ceses" icon="bars" kpis={headcount.kpis} hallazgos={headcount.hallazgos}>
+    <p class="mt-4 border-t border-line pt-3 text-[11px] leading-snug text-muted">
+      El headcount de {CD_NOMBRE} sale de la hoja consolidada. El HC nacional, la tabla por CD y los ceses salen de las hojas
+      Headcount y Ceses, que cubren todos los CD (ene–may, sin año en la fuente).
+    </p>
+  </SectionSummary>
+
+  <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
+    <Chart
+      id="hc-por-cd"
+      title="Headcount T2 por CD"
+      subtitle={`¿Qué tamaño tiene ${CD_NOMBRE} frente a los demás CD? · personas en ${hcPorCD.mes}; ${CD_NOMBRE} en amarillo`}
+      option={hcCD}
+      height={Math.max(260, filasCD.length * 15 + 30)}
+    />
+    <div class="flex flex-col gap-5">
+      <Chart
+        id="ceses-motivo"
+        title="Ceses por motivo"
+        subtitle={`¿Por qué salen las personas? · n.º de ceses (total ${cesesResumen.total})`}
+        option={motivos}
+        height={Math.max(220, motivosAsc.length * 30 + 20)}
+      />
+      <Chart
+        id="ceses-clase-mes"
+        title="Ceses voluntarios vs involuntarios por mes"
+        subtitle="¿Las salidas son decisión de la persona o de la empresa? · n.º de ceses"
+        option={clasePorMes}
+        height={260}
+      />
+    </div>
+  </div>
+</Layout>

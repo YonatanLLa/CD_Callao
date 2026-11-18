@@ -1,0 +1,42 @@
+---
+// Bloque "Resumen de <sección>": KPIs + hallazgos generados desde los datos.
+import Icon from "./Icon.astro";
+import StatusChip from "./StatusChip.astro";
+import type { IconName } from "../lib/icons";
+import type { Kpi, Linea } from "../lib/insights";
+
+interface Props { title: string; icon: IconName; kpis: Kpi[]; hallazgos: Linea[] }
+const { title, icon, kpis, hallazgos } = Astro.props;
+---
+<section class="card overflow-hidden">
+  <header class="section-title border-b border-line px-5 py-4">
+    <span class="section-icon h-9! w-9!"><Icon name={icon} size={18} strokeWidth={2.2} /></span>
+    <h2>{title}</h2>
+  </header>
+  <div class="grid grid-cols-1 lg:grid-cols-[3fr_2fr]">
+    <dl class="grid grid-cols-1 gap-px bg-line sm:grid-cols-2">
+      {kpis.map((k) => (
+        <div class="flex flex-col gap-1 bg-surface p-4 sm:p-5">
+          <dt class="text-[11px] font-bold uppercase tracking-wide text-ink-2">{k.label}</dt>
+          <dd class="text-3xl font-extrabold leading-tight tracking-tight tabular-nums text-brand-navy-ink">{k.value}</dd>
+          {k.detail && <dd class="text-xs text-muted">{k.detail}</dd>}
+          {k.status && k.statusText && <dd class="mt-1"><StatusChip tono={k.status} text={k.statusText} /></dd>}
+        </div>
+      ))}
+    </dl>
+    <div class="border-t border-line p-5 lg:border-l lg:border-t-0">
+      <p class="mb-3 text-[11px] font-bold uppercase tracking-wide text-ink-2">Hallazgos</p>
+      <ul class="flex flex-col gap-3 text-[13px] leading-snug text-ink-2">
+        {hallazgos.map((h) => (
+          <li class="flex gap-2">
+            <span class={`mt-px shrink-0 ${h.tono === "ok" ? "text-good" : "text-alert"}`}>
+              <Icon name={h.tono === "ok" ? "check" : "alert"} size={16} />
+            </span>
+            <span set:html={h.html} />
+          </li>
+        ))}
+      </ul>
+      <slot />
+    </div>
+  </div>
+</section>

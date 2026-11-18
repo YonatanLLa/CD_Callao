@@ -1,0 +1,109 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import SectionSummary from "../components/SectionSummary.astro";
+import ProgressBar from "../components/ProgressBar.astro";
+import { FACTORES_EXITO } from "../config/resumen";
+import { acciones } from "../lib/data";
+import { planes } from "../lib/insights";
+import { fmtFecha } from "../lib/format";
+
+const temas = [...new Set(acciones.map((a) => a.tema))].sort();
+const estados = [...new Set(acciones.map((a) => a.estado))].sort();
+const badge = (e: string) => (e === "Completado" ? "badge-ok" : e === "En curso" ? "badge-yellow" : "badge-neutral");
+const icono = (e: string) => (e === "Completado" ? "✓" : e === "En curso" ? "◐" : "○");
+---
+<Layout title="Planes de acción" description="Acciones de mejora para rotación y NH turnover">
+  <SectionSummary title="Resumen de planes de acción" icon="clipboard" kpis={planes.kpis} hallazgos={planes.hallazgos}>
+    <div class="mt-4 border-t border-line pt-4">
+      <p class="mb-2 text-[11px] font-bold uppercase tracking-wide text-ink-2">Avance</p>
+      <ProgressBar segmentos={[
+        { label: "Completadas", valor: planes.completadas, clase: "bg-good" },
+        { label: "En curso", valor: planes.enCurso, clase: "bg-brand-yellow" },
+        { label: "Pendientes", valor: planes.pendientes, clase: "bg-muted" },
+      ]} />
+    </div>
+  </SectionSummary>
+
+  <section class="card p-5">
+    <div class="section-title mb-3">
+      <span class="section-icon"><Icon name="star" size={15} strokeWidth={2.2} /></span>
+      <h2>Factores de éxito</h2>
+    </div>
+    <ul class="grid grid-cols-1 gap-x-6 gap-y-2.5 text-[13px] leading-snug text-ink-2 sm:grid-cols-2 xl:grid-cols-3">
+      {FACTORES_EXITO.map((f) => (
+        <li class="flex gap-2">
+          <span class="mt-px shrink-0 text-brand-yellow"><Icon name="sparkle" size={16} /></span>
+          <span>{f}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section class="card overflow-hidden">
+    <div class="flex flex-wrap items-center gap-3 border-b border-line p-4">
+      <div class="section-title mr-2">
+        <span class="section-icon"><Icon name="clipboard" size={15} strokeWidth={2.2} /></span>
+        <h2>Planes de acción</h2>
+      </div>
+      <label class="flex items-center gap-2 text-[13px] font-medium text-ink-2">
+        Tema
+        <select class="select" data-filter="tema">
+          <option value="">Todos</option>
+          {temas.map((t) => <option value={t}>{t}</option>)}
+        </select>
+      </label>
+      <label class="flex items-center gap-2 text-[13px] font-medium text-ink-2">
+        Estado
+        <select class="select" data-filter="estado">
+          <option value="">Todos</option>
+          {estados.map((e) => <option value={e}>{e}</option>)}
+        </select>
+      </label>
+      <p class="ml-auto text-xs text-muted" aria-live="polite"><span id="acciones-count">{acciones.length}</span> de {acciones.length} acciones</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="table w-full min-w-[860px]">
+        <thead>
+          <tr>
+            <th>Fecha</th><th>Tema</th><th>Plan de acción</th><th>Empresa</th><th>Responsable</th><th>Fecha de solución</th><th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {acciones.map((a) => (
+            <tr data-tema={a.tema} data-estado={a.estado}>
+              <td class="whitespace-nowrap tabular-nums text-ink-2">{fmtFecha(a.fecha)}</td>
+              <td class="whitespace-nowrap">{a.tema}</td>
+              <td class="min-w-[280px]">{a.plan}<span class="mt-0.5 block text-[11px] text-muted">Hoja: {a.origen}</span></td>
+              <td class="whitespace-nowrap text-ink-2">{a.empresa ?? "—"}</td>
+              <td>{a.responsable || "—"}</td>
+              <td class="whitespace-nowrap tabular-nums text-ink-2">{fmtFecha(a.fechaSolucion)}</td>
+              <td><span class={`badge ${badge(a.estado)}`}><span aria-hidden="true">{icono(a.estado)}</span>{a.estado}</span></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p id="acciones-vacio" class="hidden p-6 text-center text-sm text-muted">No hay acciones con esos filtros.</p>
+  </section>
+</Layout>
+
+<script>
+  const selects = document.querySelectorAll<HTMLSelectElement>("[data-filter]");
+  const rows = document.querySelectorAll<HTMLTableRowElement>("tbody tr[data-tema]");
+  const count = document.getElementById("acciones-count");
+  const vacio = document.getElementById("acciones-vacio");
+  function aplicar() {
+    const f: Record<string, string> = {};
+    selects.forEach((s) => { f[s.dataset.filter ?? ""] = s.value; });
+    let n = 0;
+    rows.forEach((r) => {
+      const ok = (!f.tema || r.dataset.tema === f.tema) && (!f.estado || r.dataset.estado === f.estado);
+      r.hidden = !ok;
+      if (ok) n++;
+    });
+    if (count) count.textContent = String(n);
+    vacio?.classList.toggle("hidden", n > 0);
+  }
+  selects.forEach((s) => s.addEventListener("change", aplicar));
+</script>

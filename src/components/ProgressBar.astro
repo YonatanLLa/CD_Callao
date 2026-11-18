@@ -1,0 +1,25 @@
+---
+// Barra de avance segmentada (sin gráficos): completadas / en curso / pendientes.
+import { fmtNum, fmtPctC } from "../lib/format";
+interface Segmento { label: string; valor: number; clase: string }
+interface Props { segmentos: Segmento[]; alto?: string }
+const { segmentos, alto = "h-3" } = Astro.props;
+const total = segmentos.reduce((s, x) => s + x.valor, 0) || 1;
+---
+<div>
+  <div class={`flex w-full overflow-hidden rounded-full bg-surface-2 ${alto}`} role="img"
+    aria-label={segmentos.map((s) => `${s.label}: ${s.valor}`).join(", ")}>
+    {segmentos.filter((s) => s.valor > 0).map((s) => (
+      <span class={`${s.clase} h-full border-r-2 border-surface last:border-r-0`} style={`width:${(s.valor / total) * 100}%`} title={`${s.label}: ${s.valor}`}></span>
+    ))}
+  </div>
+  <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
+    {segmentos.map((s) => (
+      <li class="flex items-center gap-1.5">
+        <span class={`inline-block h-2.5 w-2.5 rounded-sm ${s.clase}`}></span>
+        {s.label} <b class="tabular-nums text-ink">{fmtNum(s.valor)}</b>
+        <span class="text-muted">({fmtPctC(s.valor / total, 0)})</span>
+      </li>
+    ))}
+  </ul>
+</div>

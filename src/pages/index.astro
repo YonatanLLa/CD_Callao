@@ -1,0 +1,104 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Icon from "../components/Icon.astro";
+import SectionCard from "../components/SectionCard.astro";
+import ProgressBar from "../components/ProgressBar.astro";
+import { CD_NOMBRE, PILARES, SLOGAN, TAGLINE } from "../config/resumen";
+import { ausentismo, conclusion, headcount, planes, rotacion } from "../lib/insights";
+import { line, metaLine, sparkline } from "../lib/charts";
+import { fmtNum, fmtPctC } from "../lib/format";
+
+const sparkRot = sparkline(rotacion.sparkCats, [
+  line({ name: "Turnover", data: rotacion.sparkValores, labels: "ends" }),
+  metaLine(rotacion.sparkMetas, "Meta", { step: false }),
+]);
+const sparkAus = sparkline(ausentismo.sparkCats, [
+  line({ name: "Ausentismo", data: ausentismo.sparkValores, area: true, labels: "ends" }),
+  metaLine(ausentismo.sparkMetas, "Meta"),
+]);
+const sparkHc = sparkline(headcount.sparkCats, [
+  line({ name: `Headcount ${CD_NOMBRE}`, data: headcount.sparkValores, area: true, labels: "ends" }),
+]);
+const first = (xs: string[]) => xs[0] ?? "";
+const last = (xs: string[]) => xs[xs.length - 1] ?? "";
+---
+<Layout title="Resumen" description={`Vista general de rotación, ausentismo, headcount y planes de acción · ${CD_NOMBRE}`}>
+  <section class="relative overflow-hidden rounded-2xl bg-brand-navy px-5 py-6 text-white sm:px-8 sm:py-8">
+    <div class="absolute inset-y-0 left-0 w-1.5 bg-brand-yellow" aria-hidden="true"></div>
+    <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-yellow/15" aria-hidden="true"></div>
+    <div class="absolute -right-2 bottom-[-50px] h-28 w-28 rounded-full border-[10px] border-brand-yellow/30" aria-hidden="true"></div>
+    <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-yellow">{CD_NOMBRE} · {rotacion.anio}</p>
+    <h2 class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Resumen ejecutivo</h2>
+    <p class="mt-2 max-w-2xl text-[15px] text-white/80">{TAGLINE}</p>
+  </section>
+
+  <section class="grid grid-cols-1 gap-5 lg:grid-cols-2" aria-label="Vista general por sección">
+    <SectionCard
+      id="spark-rotacion" title="Rotación" icon="users" href="/rotacion"
+      value={rotacion.kpis[0]!.value} label={`Turnover ${rotacion.anio}`} context={rotacion.kpis[0]!.detail}
+      status={rotacion.status} statusText={rotacion.statusText}
+      option={sparkRot} format="pctc"
+      chartLabel={`Turnover anual vs meta (amarilla), ${first(rotacion.sparkCats)}–${last(rotacion.sparkCats)}`}
+      frase={rotacion.frase}
+    />
+    <SectionCard
+      id="spark-ausentismo" title="Ausentismo" icon="calendar" href="/ausentismo"
+      value={ausentismo.valor} label={`Ausentismo ${ausentismo.anio}`} context={`Meta ${ausentismo.anio}: ${ausentismo.meta}`}
+      status={ausentismo.status} statusText={ausentismo.statusText}
+      option={sparkAus} format="pctc"
+      chartLabel={`Ausentismo mensual vs meta, ${first(ausentismo.sparkCats)} – ${last(ausentismo.sparkCats)}`}
+      frase={ausentismo.frase}
+    />
+    <SectionCard
+      id="spark-headcount" title="Headcount y ceses" icon="bars" href="/headcount"
+      value={fmtNum(headcount.hc)} label={`Headcount ${CD_NOMBRE}`} context={headcount.mes}
+      status="neutral" statusText={`${fmtPctC(headcount.pctVol)} ceses voluntarios`}
+      option={sparkHc}
+      chartLabel={`Personas por mes, ${first(headcount.sparkCats)} – ${last(headcount.sparkCats)}`}
+      frase={headcount.frase}
+    />
+    <SectionCard
+      id="planes" title="Planes de acción" icon="clipboard" href="/acciones"
+      value={fmtPctC(planes.pct, 0)} label="Acciones completadas" context={`${fmtNum(planes.completadas)} de ${fmtNum(planes.total)}`}
+      status={planes.vencidas ? "alerta" : "ok"} statusText={planes.vencidas ? `${planes.vencidas} vencidas` : "Sin vencidas"}
+      frase={planes.frase}
+    >
+      <div class="py-3">
+        <ProgressBar segmentos={[
+          { label: "Completadas", valor: planes.completadas, clase: "bg-good" },
+          { label: "En curso", valor: planes.enCurso, clase: "bg-brand-yellow" },
+          { label: "Pendientes", valor: planes.pendientes, clase: "bg-muted" },
+        ]} />
+      </div>
+    </SectionCard>
+  </section>
+
+  <section class="card flex flex-col gap-4 p-5 sm:p-6">
+    <div class="section-title">
+      <span class="section-icon h-9! w-9!"><Icon name="flag" size={18} strokeWidth={2.2} /></span>
+      <h2>Conclusión</h2>
+    </div>
+    <p class="text-[14px] leading-relaxed text-ink-2" set:html={conclusion.texto} />
+    <div class={`flex items-start gap-3 rounded-xl p-3 ${conclusion.positiva ? "bg-brand-yellow text-on-yellow" : "border border-brand-yellow bg-brand-yellow-soft text-ink"}`}>
+      <span class="shrink-0"><Icon name="trophy" size={22} /></span>
+      <p class="text-[14px] font-bold leading-snug">{conclusion.frase}</p>
+    </div>
+  </section>
+
+  <section class="grid grid-cols-1 items-center gap-6 rounded-2xl bg-sidebar px-5 py-6 text-white sm:px-8 xl:grid-cols-[3fr_2fr]">
+    <ul class="grid grid-cols-1 gap-5 sm:grid-cols-3">
+      {PILARES.map((p) => (
+        <li class="flex items-center gap-3">
+          <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full border-2 border-brand-yellow text-brand-yellow">
+            <Icon name={p.icono} size={21} />
+          </span>
+          <span class="leading-tight">
+            <span class="block text-sm font-extrabold tracking-wide">{p.titulo}</span>
+            <span class="block text-[13px] text-white/70">{p.texto}</span>
+          </span>
+        </li>
+      ))}
+    </ul>
+    <p class="border-t border-white/15 pt-5 text-base font-extrabold leading-snug text-brand-yellow xl:border-l xl:border-t-0 xl:pl-6 xl:pt-0">{SLOGAN}</p>
+  </section>
+</Layout>

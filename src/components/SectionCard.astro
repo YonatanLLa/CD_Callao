@@ -1,0 +1,52 @@
+---
+// Tarjeta de la vista general: un KPI, un mini gráfico (o slot), una frase y enlace al detalle.
+import type { EChartsOption } from "echarts";
+import Icon from "./Icon.astro";
+import StatusChip from "./StatusChip.astro";
+import type { IconName } from "../lib/icons";
+import type { Tono } from "../lib/insights";
+
+interface Props {
+  id: string; title: string; icon: IconName; href: string;
+  value: string; label: string; context?: string; status?: Tono; statusText?: string;
+  frase: string; option?: EChartsOption; format?: "pctc" | "num"; chartLabel?: string;
+}
+const { id, title, icon, href, value, label, context, status, statusText, frase, option, format = "num", chartLabel } = Astro.props;
+---
+<article class="card flex flex-col gap-4 p-5">
+  <header class="flex items-center justify-between gap-3">
+    <div class="section-title">
+      <span class="section-icon h-9! w-9!"><Icon name={icon} size={18} strokeWidth={2.2} /></span>
+      <h2>{title}</h2>
+    </div>
+    {option && (
+      <button type="button" class="btn-ghost h-7! px-2!" data-download={id} data-filename={id} title="Descargar mini gráfico como PNG" aria-label={`Descargar gráfico de ${title} como PNG`}>
+        <Icon name="download" size={14} /><span class="sr-only">PNG</span>
+      </button>
+    )}
+  </header>
+  <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+    <div>
+      <p class="text-4xl font-extrabold leading-none tracking-tight tabular-nums text-brand-navy-ink">{value}</p>
+      <p class="mt-1.5 text-[11px] font-bold uppercase tracking-wide text-ink-2">{label}</p>
+      {context && <p class="mt-0.5 text-xs text-muted">{context}</p>}
+    </div>
+    {status && statusText && <StatusChip tono={status} text={statusText} />}
+  </div>
+  {option ? (
+    <div>
+      <div id={id} data-chart data-format={format} data-option={JSON.stringify(option)} style="height:110px" class="w-full" role="img" aria-label={chartLabel ?? title}></div>
+      {chartLabel && <p class="mt-1 text-[11px] text-muted">{chartLabel}</p>}
+    </div>
+  ) : (
+    <slot />
+  )}
+  <p class="text-[13px] leading-snug text-ink-2">{frase}</p>
+  <a href={href} class="mt-auto inline-flex items-center gap-1 self-start text-[13px] font-bold text-brand-navy-ink hover:underline">
+    Ver detalle <Icon name="arrowRight" size={15} />
+  </a>
+</article>
+
+<script>
+  import "../scripts/charts";
+</script>
