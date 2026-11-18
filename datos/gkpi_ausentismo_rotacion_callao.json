@@ -1,5 +1,5 @@
 {
-  "fuente": "GKPI_AUSENTISMO Y ROTACION CALLAO- ACTUALIZADO (1).xlsx",
+  "fuente": "GKPI_AUSENTISMO_Y_ROTACION_CALLAO-_ACTUALIZADO_2026.xlsx",
   "nota": "Porcentajes como decimal (0.05 = 5%). Fechas ISO (YYYY-MM-DD / YYYY-MM). null = vacío o '-'/'NA' en el Excel.",
   "planDeAccion": {
     "historicoMensual": {
@@ -237,7 +237,7 @@
         "planDeAccion": "Fomentar la comunicación e integracion con todo el equipo mas sus familias.",
         "comentario": "TODOS",
         "responsable": "Fabiola/Cesar/Jefry",
-        "fechaSolucion": "2026-06-05",
+        "fechaSolucion": "2026-09-05",
         "estado": "COMPLETADO"
       },
       {
@@ -246,7 +246,7 @@
         "planDeAccion": "Implementar reconocimientos que involucren asistencia perfecta.",
         "comentario": "FORMAVENA",
         "responsable": "Fabiola",
-        "fechaSolucion": "2027-06-05",
+        "fechaSolucion": "2026-10-07",
         "estado": "COMPLETADO"
       },
       {
@@ -255,8 +255,8 @@
         "planDeAccion": "Realizar una pequeña entrevista en focus group para sondear posibles salidas.",
         "comentario": "FORMAVENA",
         "responsable": "Fabiola",
-        "fechaSolucion": "2023-08-25",
-        "estado": "EN CURSO"
+        "fechaSolucion": "2026-11-03",
+        "estado": "COMPLETADO"
       },
       {
         "fecha": "2026-10-05",
@@ -264,8 +264,8 @@
         "planDeAccion": "Entrevistar a los ultimos ingresos sobre su perpeción ante la empresa y cómo se ven a futuro en ella.",
         "comentario": "FORMAVENA",
         "responsable": "Fabiola",
-        "fechaSolucion": "2023-08-25",
-        "estado": "EN CURSO"
+        "fechaSolucion": "2026-11-02",
+        "estado": "COMPLETADO"
       }
     ]
   },
@@ -63959,14 +63959,14 @@
       {
         "2023": null,
         "2024": null,
-        "2025": 0,
+        "2025": null,
         "2026": 0,
         "empresa": "ADRIANCAR"
       },
       {
         "2023": null,
         "2024": null,
-        "2025": 0,
+        "2025": null,
         "2026": 0,
         "empresa": "LOGITRAK"
       },
@@ -64005,28 +64005,28 @@
         "2024": 0,
         "2025": 0,
         "2026": 0,
-        "empresa": "BREXIMAR"
+        "empresa": "ROSALES"
       },
       {
         "2023": 0,
         "2024": 0,
         "2025": 0,
         "2026": 0,
-        "empresa": "GRODVAL"
+        "empresa": "ATLAS"
       },
       {
         "2023": null,
         "2024": null,
-        "2025": 0,
+        "2025": null,
         "2026": 0,
-        "empresa": "F & B"
+        "empresa": "ADRIANCAR"
       },
       {
         "2023": null,
         "2024": null,
-        "2025": 0,
+        "2025": null,
         "2026": 0,
-        "empresa": "SEGSOL"
+        "empresa": "LOGITRAK"
       },
       {
         "2023": 0,
@@ -66130,6 +66130,7 @@
       "fecha": "2026-04-10",
       "tema": "Turnover",
       "planDeAccion": "Brindar un pack de bienvenida a quienes se incorporan al equipo",
+      "comentario": "BACKUS",
       "responsable": "Luis Llauce",
       "fechaSolucion": "2026-04-25",
       "estado": "Completado"
@@ -66138,6 +66139,7 @@
       "fecha": "2026-04-10",
       "tema": "Turnover",
       "planDeAccion": "Presentar al nuevo integrante frente al grupo de trabajo y detallar su rol",
+      "comentario": "BACKUS",
       "responsable": "Jose G. / Cesar S.",
       "fechaSolucion": "2026-04-25",
       "estado": "Completado"
@@ -66146,6 +66148,7 @@
       "fecha": "2026-04-10",
       "tema": "Turnover",
       "planDeAccion": "Reconocer mensualmente los logros alcanzados según los indicadores por área.",
+      "comentario": "BACKUS",
       "responsable": "Luis Llauce",
       "fechaSolucion": "2026-04-25",
       "estado": "Completado"
@@ -66154,6 +66157,7 @@
       "fecha": "2026-04-10",
       "tema": "Turnover",
       "planDeAccion": "Implementar dinámicas grupales con pausas activas mensuales-Martes de Movimiento",
+      "comentario": "BACKUS",
       "responsable": "Fernana Cortegana",
       "fechaSolucion": "2026-04-25",
       "estado": "Completado"
@@ -66162,6 +66166,7 @@
       "fecha": "2026-04-10",
       "tema": "Turnover",
       "planDeAccion": "Coordinar una reunión con el equipo por la celebración de Happy Hour mensual-Integración",
+      "comentario": "BACKUS",
       "responsable": "Deivy Pilco / Luis Ll.",
       "fechaSolucion": "2026-04-25",
       "estado": "Completado"
@@ -66170,6 +66175,7 @@
       "fecha": "2026-08-15",
       "tema": "NHT",
       "planDeAccion": "Solicitar con BP que se gestione la convocatoria para peak Season",
+      "comentario": "BACKUS",
       "responsable": "Jose G. / Cesar S.",
       "fechaSolucion": "2026-08-05",
       "estado": "Completado"
@@ -66178,6 +66184,7 @@
       "fecha": "2026-08-15",
       "tema": "NHT",
       "planDeAccion": "Seguir Recopilando Cv para la Entrevista para la peak season.",
+      "comentario": "BACKUS",
       "responsable": "Jose G. / Cesar S.",
       "fechaSolucion": "2026-08-15",
       "estado": "Completado"
@@ -66186,6 +66193,7 @@
       "fecha": "2026-08-15",
       "tema": "Turnover",
       "planDeAccion": "Revision de personal con reincidencia a inasistencia o tardanza en caso terceros",
+      "comentario": "BACKUS",
       "responsable": "Mnauel H/ Jhoselyn",
       "fechaSolucion": "2026-08-15",
       "estado": "Completado"
@@ -66194,6 +66202,7 @@
       "fecha": "2026-09-05",
       "tema": "NHT",
       "planDeAccion": "Solicitar la convocatoria para peak asistente de la pagina de la facultad de UCV",
+      "comentario": "BACKUS",
       "responsable": "Jose G. / Cesar S.",
       "fechaSolucion": "2026-09-15",
       "estado": "Completado"
@@ -66202,6 +66211,7 @@
       "fecha": "2026-09-05",
       "tema": "NHT",
       "planDeAccion": "Agendar activacion de espacio motivacional con clown",
+      "comentario": "BACKUS",
       "responsable": "Graciela / Luis Llauce",
       "fechaSolucion": "2026-09-20",
       "estado": "Completado"
@@ -66210,6 +66220,7 @@
       "fecha": "2026-09-11",
       "tema": "NHT",
       "planDeAccion": "Mandar correo o contactar a las Universidades UCV - UPP para que lances convocatoria.",
+      "comentario": "BACKUS",
       "responsable": "Luis Llauce",
       "fechaSolucion": "2026-09-20",
       "estado": "Completado"
@@ -66218,6 +66229,7 @@
       "fecha": "2026-09-15",
       "tema": "NHT",
       "planDeAccion": "Validar que se filtre los CV de las postulacion para el incremento de peak Season",
+      "comentario": "BACKUS",
       "responsable": "Luis Llauce",
       "fechaSolucion": "2026-09-25",
       "estado": "Completado"
@@ -66226,9 +66238,10 @@
       "fecha": "2026-10-01",
       "tema": "NHT",
       "planDeAccion": "Solicitar el avance de los reclutamiento para la agenda de entrevistar",
+      "comentario": "BACKUS",
       "responsable": "Jose G. / Cesar S.",
-      "fechaSolucion": "2026-10-10",
-      "estado": "Pendiente"
+      "fechaSolucion": "2026-10-13",
+      "estado": "Completado"
     }
   ]
 }

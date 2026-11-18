@@ -66,12 +66,15 @@ const icono = (e: string) => (e === "Completado" ? "✓" : e === "En curso" ? "�
       <table class="table w-full min-w-[860px]">
         <thead>
           <tr>
-            <th>Fecha</th><th>Tema</th><th>Plan de acción</th><th>Empresa</th><th>Responsable</th><th>Fecha de solución</th><th>Estado</th>
+            <th aria-sort="descending"><button type="button" class="sort-btn" data-sort="fecha" title="Ordenar por fecha">Fecha <span class="sort-icon" aria-hidden="true">↓</span></button></th>
+            <th>Tema</th><th>Plan de acción</th><th>Empresa</th><th>Responsable</th>
+            <th aria-sort="none"><button type="button" class="sort-btn" data-sort="fsol" title="Ordenar por fecha de solución">Fecha de solución <span class="sort-icon" aria-hidden="true">↕</span></button></th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
           {acciones.map((a) => (
-            <tr data-tema={a.tema} data-estado={a.estado}>
+            <tr data-tema={a.tema} data-estado={a.estado} data-fecha={a.fecha ?? ""} data-fsol={a.fechaSolucion ?? ""}>
               <td class="whitespace-nowrap tabular-nums text-ink-2">{fmtFecha(a.fecha)}</td>
               <td class="whitespace-nowrap">{a.tema}</td>
               <td class="min-w-[280px]">{a.plan}<span class="mt-0.5 block text-[11px] text-muted">Hoja: {a.origen}</span></td>
@@ -106,4 +109,38 @@ const icono = (e: string) => (e === "Completado" ? "✓" : e === "En curso" ? "�
     vacio?.classList.toggle("hidden", n > 0);
   }
   selects.forEach((s) => s.addEventListener("change", aplicar));
+
+  // Orden por fecha desde la cabecera: mayor a menor ↔ menor a mayor
+  const tbody = document.querySelector<HTMLTableSectionElement>("table tbody");
+  const btns = document.querySelectorAll<HTMLButtonElement>("[data-sort]");
+  let campo = "fecha", desc = true;
+  function ordenar() {
+    const lista = [...rows].sort((a, b) => {
+      const x = a.dataset[campo] ?? "", y = b.dataset[campo] ?? "";
+      if (!x !== !y) return x ? -1 : 1; // sin fecha siempre al final
+      return desc ? y.localeCompare(x) : x.localeCompare(y);
+    });
+    lista.forEach((r) => tbody?.appendChild(r));
+    btns.forEach((b) => {
+      const activo = b.dataset.sort === campo;
+      b.closest("th")?.setAttribute("aria-sort", activo ? (desc ? "descending" : "ascending") : "none");
+      const ic = b.querySelector(".sort-icon");
+      if (ic) ic.textContent = activo ? (desc ? "↓" : "↑") : "↕";
+      b.title = activo ? (desc ? "Mayor a menor (clic: menor a mayor)" : "Menor a mayor (clic: mayor a menor)") : "Ordenar por esta fecha";
+    });
+  }
+  btns.forEach((b) => b.addEventListener("click", () => {
+    const c = b.dataset.sort ?? "fecha";
+    desc = c === campo ? !desc : true;
+    campo = c;
+    ordenar();
+  }));
+  ordenar();
 </script>
+
+<style>
+  .sort-btn { display: inline-flex; align-items: center; gap: 0.3rem; font: inherit; color: inherit; text-transform: inherit; letter-spacing: inherit; cursor: pointer; white-space: nowrap; }
+  .sort-btn:hover { color: var(--color-ink, inherit); text-decoration: underline; text-underline-offset: 3px; }
+  .sort-icon { font-size: 0.85em; opacity: 0.6; }
+  th[aria-sort="ascending"] .sort-icon, th[aria-sort="descending"] .sort-icon { opacity: 1; }
+</style>

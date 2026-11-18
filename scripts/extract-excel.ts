@@ -67,11 +67,20 @@ for (let r = 45; r <= 48; r++) { ausAnual.push({ anio: at(ca, "AB", r), ausentis
   const o: any = { anio: at(ca, "AK", r) }; empHdr.forEach((e, i) => o[e] = num(at(ca, col("AL") + i, r))); o.metaPct = num(at(ca, "AS", r)); ausEmp.push(o); }
 
 // 7. Acciones
+// Columnas localizadas por encabezado (fila 2) para tolerar columnas nuevas o reordenadas.
 const ac = S("Acciones"); const acciones: any[] = [];
-for (let r = 3; ; r++) { if (at(ac, "B", r) == null) break; acciones.push({ fecha: iso(at(ac, "B", r)), tema: at(ac, "C", r), planDeAccion: at(ac, "D", r), responsable: at(ac, "E", r), fechaSolucion: iso(at(ac, "F", r)), estado: at(ac, "G", r) }); }
+const norm = (s: any) => String(s ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
+const acRange = XLSX.utils.decode_range(ac["!ref"]!); const acHdr: Record<string, number> = {};
+for (let c = acRange.s.c; c <= acRange.e.c; c++) { const h = norm(at(ac, c, 2)); if (h) acHdr[h] = c; }
+const acCol = (h: string, fallback: string | null) => acHdr[h] ?? (fallback ? col(fallback) : null);
+const cF = acCol("fecha", "B")!, cT = acCol("tema", "C")!, cP = acCol("plan de accion", "D")!, cC = acCol("comentario", null),
+  cR = acCol("responsable", "E")!, cS = acCol("fecha de solucion", "F")!, cE = acCol("estado", "G")!;
+for (let r = 3; ; r++) { if (at(ac, cF, r) == null) break;
+  acciones.push({ fecha: iso(at(ac, cF, r)), tema: at(ac, cT, r), planDeAccion: at(ac, cP, r), ...(cC != null ? { comentario: at(ac, cC, r) } : {}),
+    responsable: at(ac, cR, r), fechaSolucion: iso(at(ac, cS, r)), estado: at(ac, cE, r) }); }
 
 const result = {
-  fuente: src.split(/[\/]/).pop(), nota: "Porcentajes como decimal (0.05 = 5%). Fechas ISO (YYYY-MM-DD / YYYY-MM). null = vacío o '-'/'NA' en el Excel.",
+  fuente: process.env.FUENTE ?? src.split(/[\\/]/).pop(), nota: "Porcentajes como decimal (0.05 = 5%). Fechas ISO (YYYY-MM-DD / YYYY-MM). null = vacío o '-'/'NA' en el Excel.",
   planDeAccion: { historicoMensual: historico, acciones: planAccion },
   ceses, headcount: hc, tablaDinamicaHC: tdHC, tablaDinamicaCeses: tdCeses,
   consolidadoRotacion: { mensual: rotacionMensual, resumenAnualCD: rotAnual, turnoverPorEmpresa: byEmp("BH"), nhTurnoverPorEmpresa: byEmp("BN") },
