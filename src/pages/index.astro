@@ -23,13 +23,22 @@ const first = (xs: string[]) => xs[0] ?? "";
 const last = (xs: string[]) => xs[xs.length - 1] ?? "";
 ---
 <Layout title="Resumen" description={`Vista general de rotación, ausentismo, headcount y planes de acción · ${CD_NOMBRE}`}>
-  <section class="relative overflow-hidden rounded-2xl bg-brand-navy px-5 py-6 text-white sm:px-8 sm:py-8">
+  <section class="relative isolate flex min-h-[220px] items-center overflow-hidden rounded-2xl bg-brand-navy px-5 py-7 text-white sm:min-h-[260px] sm:px-8">
+    <!-- Foto del muro de CD Callao a la derecha, fundida con el azul -->
+    <img
+      src="/images/muro-cd-callao.jpg" alt="" aria-hidden="true" loading="eager"
+      class="absolute inset-y-0 right-0 -z-10 h-full w-full object-cover object-center opacity-60 md:w-[62%]"
+    />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-brand-navy via-brand-navy/90 to-brand-navy/10 md:via-45%" aria-hidden="true"></div>
     <div class="absolute inset-y-0 left-0 w-1.5 bg-brand-yellow" aria-hidden="true"></div>
-    <div class="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-brand-yellow/15" aria-hidden="true"></div>
-    <div class="absolute -right-2 bottom-[-50px] h-28 w-28 rounded-full border-[10px] border-brand-yellow/30" aria-hidden="true"></div>
-    <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-yellow">{CD_NOMBRE} · {rotacion.anio}</p>
-    <h2 class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Resumen ejecutivo</h2>
-    <p class="mt-2 max-w-2xl text-[15px] text-white/80">{TAGLINE}</p>
+    <div class="flex items-center gap-5">
+      <img src="/images/insignia-cd-callao.jpg" alt={`Insignia ${CD_NOMBRE}`} width="104" height="104" class="hidden h-24 w-24 shrink-0 rounded-full shadow-lg ring-4 ring-brand-yellow/40 sm:block sm:h-[104px] sm:w-[104px]" />
+      <div>
+        <p class="text-xs font-bold uppercase tracking-[0.18em] text-brand-yellow">{CD_NOMBRE} · {rotacion.anio}</p>
+        <h2 class="mt-1 text-3xl font-extrabold tracking-tight sm:text-4xl">Resumen ejecutivo</h2>
+        <p class="mt-2 max-w-xl text-[15px] text-white/85">{TAGLINE}</p>
+      </div>
+    </div>
   </section>
 
   <section class="grid grid-cols-1 gap-5 lg:grid-cols-2" aria-label="Vista general por sección">

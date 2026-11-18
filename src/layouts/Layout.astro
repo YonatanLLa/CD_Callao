@@ -42,8 +42,8 @@ const current = (href: string) => (href === "/" ? path === "/" : path.startsWith
         class="fixed inset-y-0 left-0 z-40 w-[232px] -translate-x-full bg-sidebar text-white transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0"
         aria-label="Navegación principal"
       >
-        <div class="flex h-16 items-center gap-3 border-b border-white/10 px-4">
-          <img src="/favicon.svg" alt="" width="30" height="30" />
+        <div class="sb-brand flex h-16 items-center gap-3 border-b border-white/10 px-4">
+          <img src="/images/insignia-cd-callao.jpg" alt="" width="34" height="34" class="h-[34px] w-[34px] shrink-0 rounded-full ring-2 ring-brand-yellow/50" />
           <div class="sb-text leading-tight">
             <p class="text-sm font-extrabold tracking-wide text-white">GKPI</p>
             <p class="text-xs font-semibold text-brand-yellow">{CD_NOMBRE}</p>
@@ -98,6 +98,7 @@ const current = (href: string) => (href === "/" ? path === "/" : path.startsWith
         [data-sidebar="oculto"] #shell { grid-template-columns: 64px 1fr; }
         [data-sidebar="oculto"] #sidebar { width: 64px; }
         [data-sidebar="oculto"] #sidebar .sb-text { display: none; }
+        [data-sidebar="oculto"] #sidebar .sb-brand { justify-content: center; padding-left: 0; padding-right: 0; }
         [data-sidebar="oculto"] #sidebar .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
       }
     </style>
