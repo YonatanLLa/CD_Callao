@@ -188,8 +188,8 @@ export const headcount = (() => {
       label: `Headcount ${CD_NOMBRE}`, value: fmtNum(ult?.hc ?? null),
       detail: ult ? `${ult.label}${mismoMesPrev?.hc != null && ult.hc != null ? ` · ${ult.hc - mismoMesPrev.hc >= 0 ? "+" : "−"}${fmtNum(Math.abs(ult.hc - mismoMesPrev.hc))} vs ${mismoMesPrev.label}` : ""}` : undefined,
     },
-    { label: "Headcount nacional", value: fmtNum(kpis.hcNacional), detail: `${kpis.hcNacionalMes} · hoja Headcount` },
-    { label: "Ceses (todos los CD)", value: fmtNum(cesesResumen.total), detail: `${plural(cesesResumen.turnoverSi, "computa", "computan")} para turnover` },
+    { label: `Headcount T2 ${CD_NOMBRE}`, value: fmtNum(kpis.hcNacional), detail: `${kpis.hcNacionalMes} · hoja Headcount` },
+    { label: `Ceses ${CD_NOMBRE}`, value: fmtNum(cesesResumen.total), detail: `${plural(cesesResumen.turnoverSi, "computa", "computan")} para turnover` },
     { label: "Ceses voluntarios", value: fmtPctC(pctVol), detail: `${fmtNum(voluntarios)} de ${fmtNum(cesesResumen.total)}` },
   ];
 
@@ -201,7 +201,7 @@ export const headcount = (() => {
 
   const hallazgos: Linea[] = [];
   if (pos >= 0) {
-    hallazgos.push({ tono: "ok", html: `${CD_NOMBRE} es el ${b(`n.º ${pos + 1}`)} de ${ranking.length} CD por headcount T2 en ${hcPorCD.mes} (${plural(ranking[pos]!.valor ?? 0, "persona")}).` });
+    hallazgos.push({ tono: "ok", html: `${CD_NOMBRE} registra ${b(plural(ranking[pos]!.valor ?? 0, "persona"))} en headcount T2 en ${hcPorCD.mes}.` });
   }
   if (motivoTop) {
     hallazgos.push({
@@ -218,8 +218,8 @@ export const headcount = (() => {
   }
 
   const frase = ult?.hc != null
-    ? `${fmtNum(ult.hc)} personas en ${CD_NOMBRE} a ${ult.label}. A nivel nacional, ${fmtNum(cesesResumen.total)} ceses (${fmtPctC(pctVol)} voluntarios).`
-    : `${fmtNum(cesesResumen.total)} ceses a nivel nacional.`;
+    ? `${fmtNum(ult.hc)} personas en ${CD_NOMBRE} a ${ult.label}. En ${CD_NOMBRE}, ${fmtNum(cesesResumen.total)} ceses (${fmtPctC(pctVol)} voluntarios).`
+    : `${fmtNum(cesesResumen.total)} ceses en ${CD_NOMBRE}.`;
   const spark = conDato.slice(-12);
   return {
     hc: ult?.hc ?? null, mes: ult?.label ?? "", kpis: kpisHc, hallazgos, frase, pctVol,
@@ -281,7 +281,7 @@ export const conclusion = (() => {
   const s1 = t != null && m != null
     ? `En ${anio}, el turnover de ${CD_NOMBRE} (${b(par(t, m)[0])}) está ${relacion(t, m)} la meta (${par(t, m)[1]}) y el ausentismo ${ausentismo.anio} (${b(ausentismo.valor)}) está ${ausentismo.status === "ok" ? "dentro de" : "por encima de"} su meta (${ausentismo.meta}).`
     : `El ausentismo ${ausentismo.anio} es ${b(ausentismo.valor)} frente a una meta de ${ausentismo.meta}.`;
-  const s2 = `El CD cuenta con ${b(fmtNum(headcount.hc))} personas a ${headcount.mes}, ${cesesAnio === 0 ? "sin ceses" : `con ${plural(cesesAnio, "cese")}`} en ${anio}; a nivel nacional hay ${fmtNum(cesesResumen.total)} ceses (${fmtPctC(headcount.pctVol)} voluntarios).`;
+  const s2 = `El CD cuenta con ${b(fmtNum(headcount.hc))} personas a ${headcount.mes}, ${cesesAnio === 0 ? "sin ceses" : `con ${plural(cesesAnio, "cese")}`} en ${anio}; en la hoja de ceses de ${CD_NOMBRE} hay ${fmtNum(cesesResumen.total)} ceses (${fmtPctC(headcount.pctVol)} voluntarios).`;
   const s3 = `Del plan de acción, ${b(`${fmtNum(planes.completadas)} de ${fmtNum(planes.total)}`)} acciones están completadas${planes.vencidas ? ` y ${plural(planes.vencidas, "abierta está vencida", "abiertas están vencidas")}` : ""}.`;
   return {
     texto: `${s1} ${s2} ${s3}`,

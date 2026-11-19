@@ -65617,7 +65617,7 @@
             "pct": 0
           },
           "ATLAS": {
-            "diasAusentes": 1,
+            "diasAusentes": 0,
             "diasTrabajados": 0,
             "pct": 0
           },
@@ -65649,9 +65649,9 @@
             "pct": 0
           },
           "FORMAVENA": {
-            "diasAusentes": 1,
+            "diasAusentes": 0,
             "diasTrabajados": 572,
-            "pct": 0.001748
+            "pct": 0
           },
           "ROSALES": {
             "diasAusentes": 0,
@@ -65659,7 +65659,7 @@
             "pct": 0
           },
           "ATLAS": {
-            "diasAusentes": 1,
+            "diasAusentes": 0,
             "diasTrabajados": 0,
             "pct": 0
           },
@@ -65674,7 +65674,7 @@
             "pct": 0
           }
         },
-        "ausentismoPct": 0.000277,
+        "ausentismoPct": 0,
         "metaCD": 0
       },
       {
@@ -65701,9 +65701,9 @@
             "pct": 0
           },
           "ATLAS": {
-            "diasAusentes": 1,
+            "diasAusentes": 0,
             "diasTrabajados": 1170,
-            "pct": 0.000855
+            "pct": 0
           },
           "ADRIANCAR": {
             "diasAusentes": null,
@@ -66074,7 +66074,7 @@
       },
       {
         "anio": 2026,
-        "ausentismoPctCDRimac": 0.000023,
+        "ausentismoPctCDRimac": 0,
         "metaCD": 0
       }
     ],
@@ -66116,9 +66116,9 @@
         "anio": 2026,
         "BACKUS": 0,
         "T77": 0,
-        "FORMAVENA": 0.001748,
+        "FORMAVENA": 0,
         "BREXIMAR": 0,
-        "GRODVAL": 7,
+        "GRODVAL": 0,
         "F & B": 0,
         "SEGSOL": 0,
         "metaPct": 0

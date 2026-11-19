@@ -22,31 +22,30 @@ const clasePorMes = bars(cesesPorMesClase.meses, [
 <Layout title="Headcount y ceses" description="Headcount por CD y ceses">
   <SectionSummary title="Resumen de headcount y ceses" icon="bars" kpis={headcount.kpis} hallazgos={headcount.hallazgos}>
     <p class="mt-4 border-t border-line pt-3 text-[11px] leading-snug text-muted">
-      El headcount de {CD_NOMBRE} sale de la hoja consolidada. El HC nacional, la tabla por CD y los ceses salen de las hojas
-      Headcount y Ceses, que cubren todos los CD (ene–may, sin año en la fuente).
+      El headcount de {CD_NOMBRE} sale de la hoja consolidada. La tabla T2 y los ceses están filtrados exclusivamente a {CD_NOMBRE} (ene–may, sin año en la fuente).
     </p>
   </SectionSummary>
 
   <div class="grid grid-cols-1 gap-5 xl:grid-cols-2">
     <Chart
       id="hc-por-cd"
-      title="Headcount T2 por CD"
-      subtitle={`¿Qué tamaño tiene ${CD_NOMBRE} frente a los demás CD? · personas en ${hcPorCD.mes}; ${CD_NOMBRE} en amarillo`}
+      title={`Headcount T2 · ${CD_NOMBRE}`}
+      subtitle={`Personas en ${hcPorCD.mes} (${CD_NOMBRE})`}
       option={hcCD}
-      height={Math.max(260, filasCD.length * 15 + 30)}
+      height={Math.max(220, filasCD.length * 40 + 40)}
     />
     <div class="flex flex-col gap-5">
       <Chart
         id="ceses-motivo"
-        title="Ceses por motivo"
-        subtitle={`¿Por qué salen las personas? · n.º de ceses (total ${cesesResumen.total})`}
+        title={`Ceses por motivo · ${CD_NOMBRE}`}
+        subtitle={`¿Por qué salen las personas en ${CD_NOMBRE}? · n.º de ceses (total ${cesesResumen.total})`}
         option={motivos}
         height={Math.max(220, motivosAsc.length * 30 + 20)}
       />
       <Chart
         id="ceses-clase-mes"
-        title="Ceses voluntarios vs involuntarios por mes"
-        subtitle="¿Las salidas son decisión de la persona o de la empresa? · n.º de ceses"
+        title={`Ceses voluntarios vs involuntarios por mes · ${CD_NOMBRE}`}
+        subtitle={`¿Las salidas en ${CD_NOMBRE} son decisión de la persona o de la empresa? · n.º de ceses`}
         option={clasePorMes}
         height={260}
       />

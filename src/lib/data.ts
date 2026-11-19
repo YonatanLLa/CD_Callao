@@ -1,6 +1,7 @@
 // Carga y agregación de datos en tiempo de build. Nada de este módulo llega al cliente
 // salvo las series agregadas que las páginas serializan en los gráficos.
 import raw from "../../datos/gkpi_ausentismo_rotacion_callao.json";
+import { CD_NOMBRE } from "../config/resumen";
 import { canonEmpresa } from "./colors";
 import { MESES_LARGOS, fmtMes, indiceMes, type MesLargo } from "./format";
 
@@ -191,7 +192,7 @@ const CONTRATO_ES: Record<string, string> = {
 const CD_ALIAS: Record<string, string> = { "CD Pto Maldonado": "CD Pto Maldo" };
 const cdNorm = (s: string) => CD_ALIAS[s] ?? s;
 
-const ceses = data.ceses;
+const ceses = data.ceses.filter((c) => cdNorm(str(c["Subdivisión de personal"])) === CD_NOMBRE);
 export const cesesResumen = {
   total: ceses.length,
   porMotivo: contar(ceses, (c) => MOTIVO_ES[str(c["Motivo de la medida"])] ?? (str(c["Motivo de la medida"]) || "Sin dato")),
@@ -204,8 +205,8 @@ export const cesesResumen = {
   nhtoSi: ceses.filter((c) => str(c.NHTO) === "SÍ").length,
 };
 
-// ---------- Headcount (hoja nacional, agregada) ----------
-const hcRows = data.headcount;
+// ---------- Headcount (filtrado a CD Callao) ----------
+const hcRows = data.headcount.filter((r) => cdNorm(str(r["OM Pers. subarea text"])) === CD_NOMBRE);
 const MESES_HC = [...new Set(hcRows.map((r) => str(r.MES)))]
   .sort((a, b) => indiceMes(a) - indiceMes(b));
 const EMPRESA_CORTA: Record<string, string> = {
@@ -233,10 +234,12 @@ const ultimoMesTD = (["mayo", "abril", "marzo", "febrero", "enero"] as const).fi
 export const hcPorCD = {
   mes: ultimoMesTD,
   filas: data.tablaDinamicaHC.headcountPorCD
+    .filter((f) => cdNorm(f.cd) === CD_NOMBRE)
     .map((f) => ({ cd: f.cd, valor: num(f[ultimoMesTD]) }))
     .sort((a, b) => (a.valor ?? 0) - (b.valor ?? 0)),
 };
 export const newHirePorCD = data.tablaDinamicaHC.newHirePorCD.datos
+  .filter((f) => cdNorm(f.cd) === CD_NOMBRE)
   .map((f) => ({ cd: f.cd, valor: num(f.total) }))
   .filter((f) => f.valor != null && f.valor > 0)
   .sort((a, b) => (a.valor ?? 0) - (b.valor ?? 0));
